@@ -3,296 +3,451 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Análisis Electromagnético - UTA</title>
+    <title>Laboratorio Virtual de Electromagnetismo | UTA</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
     <style>
         :root {
-            --uta-red: #A30000;
-            --uta-dark: #1A1A1A;
-            --bg-color: #F8F9FA;
+            --uta-red: #8B0000;      /* Rojo institucional oscuro */
+            --uta-gold: #D4AF37;     /* Dorado institucional */
+            --bg-light: #F4F7F6;     /* Fondo general */
+            --surface: #FFFFFF;      /* Fondo de tarjetas */
+            --text-main: #2C3E50;
+            --text-muted: #7F8C8D;
+            --accent: #2980B9;
+            --success: #27AE60;
         }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+        * {
+            box-sizing: border-box;
             margin: 0;
-            background-color: var(--bg-color);
-            color: #333;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
         }
-        /* --- ESTILOS DEL ENCABEZADO --- */
-        .header {
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- HEADER PROFESIONAL --- */
+        .topbar {
+            background: linear-gradient(135deg, var(--uta-red) 0%, #5c0000 100%);
+            color: white;
+            padding: 15px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: var(--uta-red);
-            color: white;
-            padding: 20px 40px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10;
         }
-        .header-text {
+
+        .university-info {
             text-align: center;
             flex-grow: 1;
         }
-        .header h1 {
-            margin: 0;
-            font-size: 28px;
-            letter-spacing: 1.5px;
+
+        .university-info h1 {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
         }
-        .header h2 {
-            margin: 5px 0 0 0;
-            font-size: 18px;
+
+        .university-info h2 {
+            font-size: 14px;
             font-weight: 400;
-            color: #FFD700; /* Toque dorado */
+            color: var(--uta-gold);
+            letter-spacing: 0.5px;
         }
-        .logo-container {
-            width: 100px;
-            height: 100px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 2px dashed rgba(255,255,255,0.5);
+
+        .logo-box {
+            height: 70px;
+            width: 70px;
+            background-color: rgba(255,255,255,0.9);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 12px;
-            text-align: center;
-            border-radius: 8px;
+            padding: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
             overflow: hidden;
         }
-        .logo-img {
+
+        .logo-box img {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
         }
 
-        /* --- ESTILOS DEL CUERPO --- */
-        .container {
+        /* --- LAYOUT DEL DASHBOARD --- */
+        .dashboard-container {
             display: flex;
-            max-width: 1400px;
-            margin: 30px auto;
-            gap: 20px;
-            padding: 0 20px;
-        }
-        .panel-control {
-            width: 350px;
-            background: white;
+            flex: 1;
             padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        .panel-control h3 {
-            margin-top: 0;
-            border-bottom: 2px solid var(--uta-red);
-            padding-bottom: 10px;
-            color: var(--uta-dark);
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-            font-size: 14px;
-        }
-        input[type="text"], input[type="number"] {
+            gap: 25px;
+            max-width: 1600px;
+            margin: 0 auto;
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-family: monospace;
-            font-size: 14px;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--uta-red);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s;
-            margin-top: 15px;
-        }
-        button:hover {
-            background-color: #800000;
-        }
-        .resultado {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e8f5e9;
-            border-left: 5px solid #2e7d32;
-            border-radius: 4px;
-            font-weight: bold;
-            display: none;
         }
 
-        /* --- ESTILOS DE LAS GRÁFICAS --- */
-        .panel-graficas {
-            flex-grow: 1;
+        /* --- PANEL LATERAL (CONTROLES) --- */
+        .sidebar {
+            width: 380px;
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 30px 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
-        .grafica {
-            background: white;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            height: 350px;
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--uta-red);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 12px 12px 35px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: monospace;
+            transition: all 0.3s ease;
+            background-color: #fcfcfc;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.1);
+            background-color: #fff;
+        }
+
+        .btn-analyze {
+            background: var(--uta-red);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-analyze:hover {
+            background: #6b0000;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(139, 0, 0, 0.2);
+        }
+
+        /* --- TARJETA DE IDENTIFICACIÓN --- */
+        .id-card {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .id-card.success {
+            background: #f0fdf4;
+            border-color: #bbf7d0;
+            border-left: 5px solid var(--success);
+        }
+
+        .id-card.unknown {
+            background: #fffbeb;
+            border-color: #fef08a;
+            border-left: 5px solid var(--uta-gold);
+        }
+
+        .id-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .id-name {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 5px;
+        }
+
+        .id-type {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: inline-block;
+            background: #e2e8f0;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        /* --- ÁREA DE GRÁFICAS --- */
+        .charts-area {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            align-content: start;
+        }
+
+        .chart-container {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            height: 380px;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
     </style>
 </head>
 <body>
 
-    <header class="header">
-        <div class="logo-container">
-            <img src="sello_uta.png" alt="Sello UTA" class="logo-img" onerror="this.style.display='none'; this.parentNode.innerHTML='Sello<br>UTA'">
+    <header class="topbar">
+        <div class="logo-box">
+            <img src="sello_uta.png" alt="Sello UTA" onerror="this.style.display='none'">
         </div>
         
-        <div class="header-text">
-            <h1>UNIVERSIDAD TÉCNICA DE AMBATO</h1>
-            <h2>FACULTAD DE INGENIERÍA EN SISTEMAS ELECTRÓNICA E INDUSTRIAL</h2>
+        <div class="university-info">
+            <h1>Universidad Técnica de Ambato</h1>
+            <h2>Facultad de Ingeniería en Sistemas, Electrónica e Industrial</h2>
         </div>
 
-        <div class="logo-container">
-            <img src="sello_fisei.png" alt="Sello FISEI" class="logo-img" onerror="this.style.display='none'; this.parentNode.innerHTML='Sello<br>FISEI'">
+        <div class="logo-box">
+            <img src="sello_fisei.png" alt="Sello FISEI" onerror="this.style.display='none'">
         </div>
     </header>
 
-    <div class="container">
+    <div class="dashboard-container">
         
-        <div class="panel-control">
-            <h3>Parámetros del Material</h3>
+        <aside class="sidebar">
+            <div class="section-title"><i class="fa-solid fa-microchip"></i> Propiedades del Material</div>
             
-            <div class="form-group">
-                <label>Conductividad, σ (S/m):</label>
-                <input type="text" id="in_sigma" value="5.8e7">
-            </div>
-            <div class="form-group">
-                <label>Permitividad Relativa, εr:</label>
-                <input type="text" id="in_eps" value="1.0">
-            </div>
-            <div class="form-group">
-                <label>Permeabilidad Relativa, μr:</label>
-                <input type="text" id="in_mu" value="1.0">
+            <div class="input-group">
+                <label>Conductividad, σ (S/m)</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-bolt"></i>
+                    <input type="text" id="in_sigma" value="5.8e7">
+                </div>
             </div>
 
-            <h3 style="margin-top: 30px;">Rango de Frecuencia (Hz)</h3>
-            <div class="form-group">
-                <label>Frecuencia Mínima:</label>
-                <input type="text" id="in_fmin" value="1e3">
-            </div>
-            <div class="form-group">
-                <label>Frecuencia Máxima:</label>
-                <input type="text" id="in_fmax" value="1e10">
+            <div class="input-group">
+                <label>Permitividad Relativa, εr</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-atom"></i>
+                    <input type="text" id="in_eps" value="1.0">
+                </div>
             </div>
 
-            <button onclick="procesarDatos()">Ejecutar Análisis</button>
+            <div class="input-group">
+                <label>Permeabilidad Relativa, μr</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-magnet"></i>
+                    <input type="text" id="in_mu" value="1.0">
+                </div>
+            </div>
 
-            <div id="caja_resultado" class="resultado"></div>
-        </div>
+            <div class="section-title" style="margin-top: 10px;"><i class="fa-solid fa-wave-square"></i> Rango de Frecuencia</div>
+            
+            <div style="display: flex; gap: 10px;">
+                <div class="input-group" style="flex: 1;">
+                    <label>Frec. Mín (Hz)</label>
+                    <input type="text" id="in_fmin" value="1e3">
+                </div>
+                <div class="input-group" style="flex: 1;">
+                    <label>Frec. Máx (Hz)</label>
+                    <input type="text" id="in_fmax" value="1e10">
+                </div>
+            </div>
 
-        <div class="panel-graficas">
-            <div id="chart_atenuacion" class="grafica"></div>
-            <div id="chart_fase" class="grafica"></div>
-            <div id="chart_penetracion" class="grafica"></div>
-        </div>
+            <button class="btn-analyze" onclick="procesarDatos()">
+                <i class="fa-solid fa-chart-line"></i> Ejecutar Análisis
+            </button>
 
+            <div id="material_id_card" class="id-card">
+                <div class="id-title">Material Detectado</div>
+                <div class="id-name" id="mat_name">Evaluando...</div>
+                <div class="id-type" id="mat_type">Clasificación</div>
+            </div>
+        </aside>
+
+        <main class="charts-area">
+            <div class="chart-container" id="chart_atenuacion"></div>
+            <div class="chart-container" id="chart_fase"></div>
+            <div class="chart-container" id="chart_penetracion"></div>
+        </main>
     </div>
 
     <script>
-        // Función para generar un vector logarítmico (equivalente a np.logspace)
         function logspace(min, max, steps) {
             const arr = [];
             const logMin = Math.log10(min);
             const logMax = Math.log10(max);
             const step = (logMax - logMin) / (steps - 1);
-            for (let i = 0; i < steps; i++) {
-                arr.push(Math.pow(10, logMin + (step * i)));
-            }
+            for (let i = 0; i < steps; i++) arr.push(Math.pow(10, logMin + (step * i)));
             return arr;
         }
 
+        // ALGORITMO DE IDENTIFICACIÓN DE MATERIALES
         function identificarMaterial(sigma, eps_r, mu_r) {
-            if (sigma >= 1e4) return "Clasificación: Buen Conductor";
-            if (sigma > 1e-5 && sigma < 1e4) return "Clasificación: Dieléctrico con Pérdidas";
-            return "Clasificación: Buen Dieléctrico (Aislante)";
+            const baseDatos = [
+                { nombre: "Cobre", s: 5.8e7, e: 1, m: 1, tipo: "Buen Conductor" },
+                { nombre: "Aluminio", s: 3.5e7, e: 1, m: 1, tipo: "Buen Conductor" },
+                { nombre: "Oro", s: 4.1e7, e: 1, m: 1, tipo: "Buen Conductor" },
+                { nombre: "Plata", s: 6.1e7, e: 1, m: 1, tipo: "Buen Conductor" },
+                { nombre: "Agua de Mar", s: 4.0, e: 81, m: 1, tipo: "Dieléctrico con Pérdidas" },
+                { nombre: "Agua Dulce", s: 1e-3, e: 80, m: 1, tipo: "Dieléctrico con Pérdidas" },
+                { nombre: "Tierra Seca", s: 1e-5, e: 3, m: 1, tipo: "Dieléctrico con Pérdidas" },
+                { nombre: "Sustrato FR-4 (PCB)", s: 1e-12, e: 4.4, m: 1, tipo: "Buen Dieléctrico (Aislante)" },
+                { nombre: "Teflón", s: 1e-16, e: 2.1, m: 1, tipo: "Buen Dieléctrico (Aislante)" },
+                { nombre: "Vacío / Aire Libre", s: 0, e: 1, m: 1, tipo: "Aislante Perfecto" }
+            ];
+
+            for (let mat of baseDatos) {
+                let coincidenciaSigma = false;
+                if (mat.s === 0 && sigma < 1e-15) coincidenciaSigma = true;
+                else if (mat.s > 0 && sigma > 0) {
+                    coincidenciaSigma = Math.abs(Math.log10(sigma) - Math.log10(mat.s)) < 0.6;
+                }
+
+                let coincidenciaEps = Math.abs(eps_r - mat.e) <= (0.2 * mat.e);
+                let coincidenciaMu = Math.abs(mu_r - mat.m) <= (0.2 * mat.m);
+
+                if (coincidenciaSigma && coincidenciaEps && coincidenciaMu) {
+                    return { nombre: mat.nombre, tipo: mat.tipo, conocido: true };
+                }
+            }
+
+            // Clasificación Teórica si no coincide exactamente
+            let tipoTeorico = "Aislante Dieléctrico";
+            if (sigma >= 1e4) tipoTeorico = "Buen Conductor";
+            else if (sigma > 1e-5 && sigma < 1e4) tipoTeorico = "Dieléctrico con Pérdidas";
+
+            return { nombre: "Material No Registrado", tipo: `Teoría: ${tipoTeorico}`, conocido: false };
         }
 
         function procesarDatos() {
-            // 1. Obtener valores del HTML
+            // Leer Datos
             const sigma = parseFloat(document.getElementById('in_sigma').value);
             const eps_r = parseFloat(document.getElementById('in_eps').value);
             const mu_r = parseFloat(document.getElementById('in_mu').value);
             const f_min = parseFloat(document.getElementById('in_fmin').value);
             const f_max = parseFloat(document.getElementById('in_fmax').value);
 
-            // Mostrar clasificación
-            const cajaRes = document.getElementById('caja_resultado');
-            cajaRes.style.display = 'block';
-            cajaRes.innerHTML = identificarMaterial(sigma, eps_r, mu_r);
+            // Identificación y UI
+            const matInfo = identificarMaterial(sigma, eps_r, mu_r);
+            const card = document.getElementById('material_id_card');
+            document.getElementById('mat_name').innerText = matInfo.nombre;
+            document.getElementById('mat_type').innerText = matInfo.tipo;
+            
+            card.style.display = 'block';
+            card.className = 'id-card ' + (matInfo.conocido ? 'success' : 'unknown');
 
-            // 2. Constantes Físicas
+            // Cálculos Físicos
             const mu_0 = 4 * Math.PI * 1e-7;
             const eps_0 = 8.854e-12;
             const mu = mu_r * mu_0;
             const eps = eps_r * eps_0;
 
-            const frecuencias = logspace(f_min, f_max, 500);
-            const arr_alpha = [];
-            const arr_beta = [];
-            const arr_delta = [];
+            const f = logspace(f_min, f_max, 300);
+            const alpha = [], beta = [], delta = [];
 
-            // 3. Cálculos de números complejos en JavaScript puro
-            // gamma = sqrt(j*w*mu * (sigma + j*w*eps))
-            // Z = -w^2*mu*eps + j*w*mu*sigma  => gamma = sqrt(Z)
-            for (let i = 0; i < frecuencias.length; i++) {
-                let f = frecuencias[i];
-                let w = 2 * Math.PI * f;
-                
+            for (let i = 0; i < f.length; i++) {
+                let w = 2 * Math.PI * f[i];
                 let realPart = -(w * w) * mu * eps;
                 let imagPart = w * mu * sigma;
-                
                 let magnitud = Math.sqrt(realPart * realPart + imagPart * imagPart);
                 
-                // Fórmula de raíz cuadrada compleja
-                let alpha = Math.sqrt((magnitud + realPart) / 2);
-                let beta = Math.sqrt((magnitud - realPart) / 2);
-                let delta = (alpha > 1e-15) ? (1 / alpha) : null;
+                let a = Math.sqrt((magnitud + realPart) / 2);
+                let b = Math.sqrt((magnitud - realPart) / 2);
+                let d = (a > 1e-15) ? (1 / a) : null;
 
-                arr_alpha.push(alpha);
-                arr_beta.push(beta);
-                arr_delta.push(delta);
+                alpha.push(a); beta.push(b); delta.push(d);
             }
 
-            // 4. Configurar y renderizar gráficas con Plotly
+            // Configuración Profesional de Plotly
             const layoutBase = {
-                margin: { t: 40, b: 40, l: 60, r: 20 },
-                xaxis: { title: 'Frecuencia (Hz)', type: 'log', gridcolor: '#eee' },
-                yaxis: { type: 'log', gridcolor: '#eee' },
+                font: { family: 'Inter, sans-serif' },
+                margin: { t: 50, b: 50, l: 60, r: 20 },
+                xaxis: { title: 'Frecuencia (Hz)', type: 'log', gridcolor: '#f0f0f0', zeroline: false },
+                yaxis: { type: 'log', gridcolor: '#f0f0f0', zeroline: false, exponentformat: 'e' },
                 paper_bgcolor: 'rgba(0,0,0,0)',
                 plot_bgcolor: 'rgba(0,0,0,0)',
-                font: { family: 'Segoe UI' }
+                showlegend: false,
+                hovermode: 'x unified'
             };
 
-            // Gráfica Atenuación
-            Plotly.newPlot('chart_atenuacion', [{
-                x: frecuencias, y: arr_alpha, mode: 'lines', line: {color: '#d32f2f', width: 3}, name: 'α'
-            }], { ...layoutBase, title: 'Constante de Atenuación (α) [Np/m]', yaxis: { ...layoutBase.yaxis, title: 'α (Np/m)' } }, {responsive: true});
+            const config = { responsive: true, displayModeBar: true, displaylogo: false };
 
-            // Gráfica Fase
-            Plotly.newPlot('chart_fase', [{
-                x: frecuencias, y: arr_beta, mode: 'lines', line: {color: '#1976d2', width: 3}, name: 'β'
-            }], { ...layoutBase, title: 'Constante de Fase (β) [rad/m]', yaxis: { ...layoutBase.yaxis, title: 'β (rad/m)' } }, {responsive: true});
+            Plotly.newPlot('chart_atenuacion', [{ x: f, y: alpha, mode: 'lines', line: {color: '#E63946', width: 3}, name: 'α (Np/m)' }], 
+                { ...layoutBase, title: {text: 'Atenuación (α)', font: {size: 18, color: '#2C3E50'}}, yaxis: { ...layoutBase.yaxis, title: 'Np/m' } }, config);
 
-            // Gráfica Penetración
-            Plotly.newPlot('chart_penetracion', [{
-                x: frecuencias, y: arr_delta, mode: 'lines', line: {color: '#388e3c', width: 3}, name: 'δ'
-            }], { ...layoutBase, title: 'Profundidad de Penetración (δ) [m]', yaxis: { ...layoutBase.yaxis, title: 'δ (m)' } }, {responsive: true});
+            Plotly.newPlot('chart_fase', [{ x: f, y: beta, mode: 'lines', line: {color: '#1D3557', width: 3}, name: 'β (rad/m)' }], 
+                { ...layoutBase, title: {text: 'Fase (β)', font: {size: 18, color: '#2C3E50'}}, yaxis: { ...layoutBase.yaxis, title: 'rad/m' } }, config);
+
+            Plotly.newPlot('chart_penetracion', [{ x: f, y: delta, mode: 'lines', line: {color: '#2A9D8F', width: 3}, name: 'δ (m)' }], 
+                { ...layoutBase, title: {text: 'Profundidad de Penetración (δ)', font: {size: 18, color: '#2C3E50'}}, yaxis: { ...layoutBase.yaxis, title: 'Metros' } }, config);
         }
 
-        // Ejecutar por defecto al cargar la página
         window.onload = procesarDatos;
     </script>
 </body>
