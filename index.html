@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis Electromagnético - UTA</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        :root {
+            --uta-red: #A30000;
+            --uta-dark: #1A1A1A;
+            --bg-color: #F8F9FA;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: #333;
+        }
+        /* --- ESTILOS DEL ENCABEZADO --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--uta-red);
+            color: white;
+            padding: 20px 40px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header-text {
+            text-align: center;
+            flex-grow: 1;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: 1.5px;
+        }
+        .header h2 {
+            margin: 5px 0 0 0;
+            font-size: 18px;
+            font-weight: 400;
+            color: #FFD700; /* Toque dorado */
+        }
+        .logo-container {
+            width: 100px;
+            height: 100px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 2px dashed rgba(255,255,255,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            text-align: center;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .logo-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* --- ESTILOS DEL CUERPO --- */
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 30px auto;
+            gap: 20px;
+            padding: 0 20px;
+        }
+        .panel-control {
+            width: 350px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .panel-control h3 {
+            margin-top: 0;
+            border-bottom: 2px solid var(--uta-red);
+            padding-bottom: 10px;
+            color: var(--uta-dark);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--uta-red);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 15px;
+        }
+        button:hover {
+            background-color: #800000;
+        }
+        .resultado {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f5e9;
+            border-left: 5px solid #2e7d32;
+            border-radius: 4px;
+            font-weight: bold;
+            display: none;
+        }
+
+        /* --- ESTILOS DE LAS GRÁFICAS --- */
+        .panel-graficas {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .grafica {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: 350px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo-container">
+            <img src="sello_uta.png" alt="Sello UTA" class="logo-img" onerror="this.style.display='none'; this.parentNode.innerHTML='Sello<br>UTA'">
+        </div>
+        
+        <div class="header-text">
+            <h1>UNIVERSIDAD TÉCNICA DE AMBATO</h1>
+            <h2>FACULTAD DE INGENIERÍA EN SISTEMAS ELECTRÓNICA E INDUSTRIAL</h2>
+        </div>
+
+        <div class="logo-container">
+            <img src="sello_fisei.png" alt="Sello FISEI" class="logo-img" onerror="this.style.display='none'; this.parentNode.innerHTML='Sello<br>FISEI'">
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <div class="panel-control">
+            <h3>Parámetros del Material</h3>
+            
+            <div class="form-group">
+                <label>Conductividad, σ (S/m):</label>
+                <input type="text" id="in_sigma" value="5.8e7">
+            </div>
+            <div class="form-group">
+                <label>Permitividad Relativa, εr:</label>
+                <input type="text" id="in_eps" value="1.0">
+            </div>
+            <div class="form-group">
+                <label>Permeabilidad Relativa, μr:</label>
+                <input type="text" id="in_mu" value="1.0">
+            </div>
+
+            <h3 style="margin-top: 30px;">Rango de Frecuencia (Hz)</h3>
+            <div class="form-group">
+                <label>Frecuencia Mínima:</label>
+                <input type="text" id="in_fmin" value="1e3">
+            </div>
+            <div class="form-group">
+                <label>Frecuencia Máxima:</label>
+                <input type="text" id="in_fmax" value="1e10">
+            </div>
+
+            <button onclick="procesarDatos()">Ejecutar Análisis</button>
+
+            <div id="caja_resultado" class="resultado"></div>
+        </div>
+
+        <div class="panel-graficas">
+            <div id="chart_atenuacion" class="grafica"></div>
+            <div id="chart_fase" class="grafica"></div>
+            <div id="chart_penetracion" class="grafica"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Función para generar un vector logarítmico (equivalente a np.logspace)
+        function logspace(min, max, steps) {
+            const arr = [];
+            const logMin = Math.log10(min);
+            const logMax = Math.log10(max);
+            const step = (logMax - logMin) / (steps - 1);
+            for (let i = 0; i < steps; i++) {
+                arr.push(Math.pow(10, logMin + (step * i)));
+            }
+            return arr;
+        }
+
+        function identificarMaterial(sigma, eps_r, mu_r) {
+            if (sigma >= 1e4) return "Clasificación: Buen Conductor";
+            if (sigma > 1e-5 && sigma < 1e4) return "Clasificación: Dieléctrico con Pérdidas";
+            return "Clasificación: Buen Dieléctrico (Aislante)";
+        }
+
+        function procesarDatos() {
+            // 1. Obtener valores del HTML
+            const sigma = parseFloat(document.getElementById('in_sigma').value);
+            const eps_r = parseFloat(document.getElementById('in_eps').value);
+            const mu_r = parseFloat(document.getElementById('in_mu').value);
+            const f_min = parseFloat(document.getElementById('in_fmin').value);
+            const f_max = parseFloat(document.getElementById('in_fmax').value);
+
+            // Mostrar clasificación
+            const cajaRes = document.getElementById('caja_resultado');
+            cajaRes.style.display = 'block';
+            cajaRes.innerHTML = identificarMaterial(sigma, eps_r, mu_r);
+
+            // 2. Constantes Físicas
+            const mu_0 = 4 * Math.PI * 1e-7;
+            const eps_0 = 8.854e-12;
+            const mu = mu_r * mu_0;
+            const eps = eps_r * eps_0;
+
+            const frecuencias = logspace(f_min, f_max, 500);
+            const arr_alpha = [];
+            const arr_beta = [];
+            const arr_delta = [];
+
+            // 3. Cálculos de números complejos en JavaScript puro
+            // gamma = sqrt(j*w*mu * (sigma + j*w*eps))
+            // Z = -w^2*mu*eps + j*w*mu*sigma  => gamma = sqrt(Z)
+            for (let i = 0; i < frecuencias.length; i++) {
+                let f = frecuencias[i];
+                let w = 2 * Math.PI * f;
+                
+                let realPart = -(w * w) * mu * eps;
+                let imagPart = w * mu * sigma;
+                
+                let magnitud = Math.sqrt(realPart * realPart + imagPart * imagPart);
+                
+                // Fórmula de raíz cuadrada compleja
+                let alpha = Math.sqrt((magnitud + realPart) / 2);
+                let beta = Math.sqrt((magnitud - realPart) / 2);
+                let delta = (alpha > 1e-15) ? (1 / alpha) : null;
+
+                arr_alpha.push(alpha);
+                arr_beta.push(beta);
+                arr_delta.push(delta);
+            }
+
+            // 4. Configurar y renderizar gráficas con Plotly
+            const layoutBase = {
+                margin: { t: 40, b: 40, l: 60, r: 20 },
+                xaxis: { title: 'Frecuencia (Hz)', type: 'log', gridcolor: '#eee' },
+                yaxis: { type: 'log', gridcolor: '#eee' },
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: { family: 'Segoe UI' }
+            };
+
+            // Gráfica Atenuación
+            Plotly.newPlot('chart_atenuacion', [{
+                x: frecuencias, y: arr_alpha, mode: 'lines', line: {color: '#d32f2f', width: 3}, name: 'α'
+            }], { ...layoutBase, title: 'Constante de Atenuación (α) [Np/m]', yaxis: { ...layoutBase.yaxis, title: 'α (Np/m)' } }, {responsive: true});
+
+            // Gráfica Fase
+            Plotly.newPlot('chart_fase', [{
+                x: frecuencias, y: arr_beta, mode: 'lines', line: {color: '#1976d2', width: 3}, name: 'β'
+            }], { ...layoutBase, title: 'Constante de Fase (β) [rad/m]', yaxis: { ...layoutBase.yaxis, title: 'β (rad/m)' } }, {responsive: true});
+
+            // Gráfica Penetración
+            Plotly.newPlot('chart_penetracion', [{
+                x: frecuencias, y: arr_delta, mode: 'lines', line: {color: '#388e3c', width: 3}, name: 'δ'
+            }], { ...layoutBase, title: 'Profundidad de Penetración (δ) [m]', yaxis: { ...layoutBase.yaxis, title: 'δ (m)' } }, {responsive: true});
+        }
+
+        // Ejecutar por defecto al cargar la página
+        window.onload = procesarDatos;
+    </script>
+</body>
+</html>
